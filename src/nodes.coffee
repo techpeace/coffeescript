@@ -1171,8 +1171,10 @@ exports.Class = class Class extends Base
 # The **Assign** is used to assign a local variable to value, or to set the
 # property of an object -- including within object literals.
 exports.Assign = class Assign extends Base
-  constructor: (@variable, @value, @context, options = {}) ->
-    {@param, @subpattern, @operatorToken} = options
+  constructor: (@variable, @value, @context, options) ->
+    @param = options and options.param
+    @subpattern = options and options.subpattern
+    @isConst = options and options.const
     forbidden = (name = @variable.unwrapAll().value) in STRICT_PROSCRIBED
     if forbidden and @context isnt 'object'
       @variable.error "variable name may not be \"#{name}\""
@@ -1216,6 +1218,8 @@ exports.Assign = class Assign extends Base
       unless varBase.hasProperties?()
         if @param
           o.scope.add varBase.value, 'var'
+        else if @isConst
+          o.scope.add varBase.value, { value: 'var', assigned: false }
         else
           o.scope.find varBase.value
     val = @value.compileToFragments o, LEVEL_LIST
@@ -1223,6 +1227,8 @@ exports.Assign = class Assign extends Base
     compiledName = @variable.compileToFragments o, LEVEL_LIST
     return (compiledName.concat @makeCode(": "), val) if @context is 'object'
     answer = compiledName.concat @makeCode(" #{ @context or '=' } "), val
+    answer = [@makeCode("const ")].concat answer if @isConst
+
     if o.level <= LEVEL_LIST then answer else @wrapInBraces answer
 
   # Brief implementation of recursive pattern matching, when assigning array or

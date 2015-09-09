@@ -157,6 +157,7 @@ exports.Lexer = class Lexer
         when '&&', '||'          then 'LOGIC'
         when 'true', 'false'     then 'BOOL'
         when 'break', 'continue' then 'STATEMENT'
+        when 'const'             then 'CONST'
         else  tag
 
     tagToken = @token tag, id, 0, idLength
@@ -773,7 +774,7 @@ COFFEE_KEYWORDS = COFFEE_KEYWORDS.concat COFFEE_ALIASES
 # used by CoffeeScript internally. We throw an error when these are encountered,
 # to avoid having a JavaScript error at runtime.
 RESERVED = [
-  'case', 'default', 'function', 'var', 'void', 'with', 'const', 'let', 'enum'
+  'case', 'default', 'function', 'var', 'void', 'with', 'let', 'enum'
   'export', 'import', 'native', 'implements', 'interface', 'package', 'private'
   'protected', 'public', 'static'
 ]

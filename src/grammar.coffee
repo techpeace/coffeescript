@@ -162,6 +162,7 @@ grammar =
     o 'Assignable = Expression',                -> new Assign $1, $3
     o 'Assignable = TERMINATOR Expression',     -> new Assign $1, $4
     o 'Assignable = INDENT Expression OUTDENT', -> new Assign $1, $4
+    o 'CONST Assignable = Expression',          -> new Assign $2, $4, null, { const: true }
   ]
 
   # Assignment when it happens within an object literal. The difference from
